@@ -2,10 +2,12 @@
 const canvas = document.getElementById("myCanvas");
 canvas.width = 200;
 
-// Setting up car
+// Setting up drawing context
 const context = canvas.getContext("2d");
-const car = new Car(100, 100, 30, 50);
-car.draw(context);
+// Defining road
+const road = new Road(canvas.width / 2, canvas.width * 0.9);
+// Defining car
+const car = new Car(road.getLaneCentre(1), 100, 30, 50);
 
 // Drawing the simulation
 animate();
@@ -13,6 +15,10 @@ animate();
 function animate() {
     car.update();
     canvas.height = window.innerHeight;
-    car.draw(context)
+    context.save();
+    context.translate(0, -car.y + canvas.height * 0.7);
+    road.draw(context);
+    car.draw(context);
+    context.restore();
     requestAnimationFrame(animate); // Calls the animate() method repeatedly many times per second. It gives the illusion of movement we want.
 }
