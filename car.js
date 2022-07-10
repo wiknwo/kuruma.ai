@@ -9,11 +9,13 @@ class Car {
         this.maxSpeed = 3;
         this.friction = 0.05;
         this.angle = 0;
+        this.sensor = new Sensor(this); // Passing this car to sensor
         this.controls = new Controls();
     }
 
-    update() {
+    update(roadBoarders) {
         this.#move();
+        this.sensor.update(roadBoarders);
     }
 
     #move() {
@@ -50,6 +52,6 @@ class Car {
         context.rect(-this.width / 2, -this.height / 2, this.width, this.height);
         context.fill();
         context.restore();
+        this.sensor.draw(context); // Car now has responsibility to draw its own sensor
     }
-
 }
