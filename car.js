@@ -9,13 +9,36 @@ class Car {
         this.maxSpeed = 3;
         this.friction = 0.05;
         this.angle = 0;
+        this.isdamaged = false;
         this.sensor = new Sensor(this); // Passing this car to sensor
         this.controls = new Controls();
     }
 
     update(roadBoarders) {
-        this.#move();
+        if (!this.isdamaged) {
+            this.#move();
+            this.polygon = this.#createPolygon();
+            this.isdamaged = this.#assessDamage(roadBoarders);
+        }        
         this.sensor.update(roadBoarders);
+    }
+
+    #assessDamage(roadBoarders) {
+        for (let i = 0; i < roadBoarders.length; i++) {
+            if (polysIntersect(this.polygon, roadBoarders[i])) return true;
+        }
+        return false;
+    }
+
+    #createPolygon () {
+        const points = []; // One point for each corner of the car.
+        const radius = Math.hypot(this.width, this.height) / 2;
+        const alpha = Math.atan2(this.width, this.height);
+        points.push({x:this.x - Math.sin(this.angle - alpha) * radius, y:this.y - Math.cos(this.angle - alpha) * radius}); // Top right corner of car.
+        points.push({x:this.x - Math.sin(this.angle + alpha) * radius, y:this.y - Math.cos(this.angle + alpha) * radius}); // Top left corner of car.
+        points.push({x:this.x - Math.sin(Math.PI + this.angle - alpha) * radius, y:this.y - Math.cos(Math.PI + this.angle - alpha) * radius}); // Bottom right corner of car.
+        points.push({x:this.x - Math.sin(Math.PI + this.angle + alpha) * radius, y:this.y - Math.cos(Math.PI + this.angle + alpha) * radius}); // Bottom left corner of car.
+        return points;
     }
 
     #move() {
@@ -45,13 +68,17 @@ class Car {
     }
 
     draw(context) {
-        context.save();
-        context.translate(this.x, this.y);
-        context.rotate(-this.angle);
-        context.beginPath()
-        context.rect(-this.width / 2, -this.height / 2, this.width, this.height);
+        if (this.isdamaged) {
+            context.fillStyle = "gray";
+        } else {
+            context.fillStyle = "black";
+        }
+        context.beginPath();
+        context.moveTo(this.polygon[0].x, this.polygon[0].y);
+        for (let i = 1; i < this.polygon.length; i++) {
+            context.lineTo(this.polygon[i].x, this.polygon[i].y);
+        }
         context.fill();
-        context.restore();
         this.sensor.draw(context); // Car now has responsibility to draw its own sensor
     }
 }
