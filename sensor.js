@@ -9,15 +9,15 @@ class Sensor {
         this.readings = []; // Consists of elements in the array indicating if there is a border there or not
     }
 
-    update(roadBoarders) {
+    update(roadBoarders, traffic) {
         this.#castRays();
         this.readings = [];
         for (let i = 0; i < this.rays.length; i++) {
-            this.readings.push(this.#getReading(this.rays[i], roadBoarders));
+            this.readings.push(this.#getReading(this.rays[i], roadBoarders, traffic));
         }
     }
 
-    #getReading(ray, roadBoarders) {
+    #getReading(ray, roadBoarders, traffic) {
         // Finds where ray touches road borders
         // Does this by finding all intersections
         // with the ray (all points on the ray) and 
@@ -28,6 +28,12 @@ class Sensor {
         for (let i = 0; i < roadBoarders.length; i++) {
             const touch = getIntersection(ray[0], ray[1], roadBoarders[i][0], roadBoarders[i][1]);
             if (touch) touches.push(touch);
+        }
+        for (let i = 0; i < traffic.length; i++) {
+            for (let j = 0; j < traffic[i].polygon.length; j++) {
+                const touch = getIntersection(ray[0], ray[1], traffic[i].polygon[j], traffic[i].polygon[(j + 1) % traffic[i].polygon.length]);
+                if (touch) touches.push(touch);
+            }
         }
         if (touches.length == 0) {
             return null;
