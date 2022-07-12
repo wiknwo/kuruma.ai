@@ -26,3 +26,13 @@ function polysIntersect(poly1, poly2) {
     }
     return false;
 }
+
+function getRGBA(weight) {
+    // Gets the RGB value for a given line representing connection in ANN
+    const alpha = Math.abs(weight); // alpha determines the opacity of the lines.
+    // yellow for positive values and blue for negative values
+    const R = weight < 0 ? 0 : 255;
+    const G = R; // Green is set to Red as they will share the same RGB value to combine and form yellow
+    const B = weight > 0 ? 0 : 255;
+    return "rgba(" + R + "," + G + "," + B + "," + alpha + ")";
+}
