@@ -36,3 +36,9 @@ function getRGBA(weight) {
     const B = weight > 0 ? 0 : 255;
     return "rgba(" + R + "," + G + "," + B + "," + alpha + ")";
 }
+
+function getRandomColor() {
+    // Generates a random color according to the HSL (Hue, Saturation and Lightness) format
+    const hue = 290 + Math.random() * 260;
+    return "hsl(" + hue + ", 100%, 60%)";
+}

@@ -1,5 +1,5 @@
 class Car {
-    constructor(x, y, width, height, controlType, maxSpeed=3) {
+    constructor(x, y, width, height, controlType, maxSpeed=3, color="blue") {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -18,6 +18,21 @@ class Car {
         this.controls = new Controls(controlType);
         this.image = new Image();
         this.image.src = "car.png";
+        this.mask = document.createElement("canvas");
+        this.mask.width = width;
+        this.mask.height = height;
+        // We draw the car on this mini canvas first
+        // then we use a trick to keep the car in its
+        // original color coming from the constructor.
+        const maskContext = this.mask.getContext("2d");
+        this.image.onload = () => {
+            maskContext.fillStyle = color;
+            maskContext.rect(0, 0, this.width, this.height);
+            maskContext.fill();
+            maskContext.globalCompositeOperation = "destination-atop"; // Keeps color only where it overlaps with the image of the car
+            maskContext.drawImage(this.image, 0, 0, this.width, this.height);
+        }
+
     }
 
     update(roadBoarders, traffic) {
@@ -87,11 +102,15 @@ class Car {
     }
 
     draw(context, drawSensor=false) {
+        if (this.sensor && drawSensor) this.sensor.draw(context); // Car now has responsibility to draw its own sensor
         context.save();
         context.translate(this.x, this.y);
         context.rotate(-this.angle);
+        if (!this.isdamaged) {
+            context.drawImage(this.mask, -this.width / 2, -this.height / 2, this.width, this.height);
+            context.globalCompositeOperation = "multiply";
+        }
         context.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
         context.restore();
-        if (this.sensor && drawSensor) this.sensor.draw(context); // Car now has responsibility to draw its own sensor
     }
 }
