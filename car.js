@@ -10,7 +10,11 @@ class Car {
         this.friction = 0.05;
         this.angle = 0;
         this.isdamaged = false;
-        if (controlType != "DUMMY") this.sensor = new Sensor(this); // Passing this car to sensor
+        this.useBrain = controlType == "AI";
+        if (controlType != "DUMMY")  {
+            this.sensor = new Sensor(this); // Passing this car to sensor
+            this.brain = new ArtificialNeuralNetwork([this.sensor.rayCount, 6, 4]); // Defining new ANN with input layer consisting of rayCount neurons, hidden layer with 6 neurons and output layer with 4 neurons; one for each direction.
+        }
         this.controls = new Controls(controlType);
     }
 
@@ -22,6 +26,14 @@ class Car {
         }        
         if (this.sensor) {
             this.sensor.update(roadBoarders, traffic);
+            const offsets = this.sensor.readings.map(s => s == null ? 0 : 1 - s.offset); // Want neurons to receive low values if object is far away and high values if the object is close like a flashlight
+            const outputs = ArtificialNeuralNetwork.feedForward(offsets, this.brain);
+            if (this.useBrain) {
+                this.controls.forward = outputs[0];
+                this.controls.left = outputs[1];
+                this.controls.right = outputs[2];
+                this.controls.reverse = outputs[3];
+            }
         }
     }
 
