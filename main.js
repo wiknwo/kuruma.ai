@@ -14,9 +14,21 @@ const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 const N = 100;
 const cars = generateCars(N);
 let bestCar = cars[0]; // This will update on every frame but will be the first created car initially. Using let because the value of bestCar will change.
-if (localStorage.getItem("bestBrain")) bestCar.brain = JSON.parse(localStorage.getItem("bestBrain")); // localStorage only works with strings which is why we get the serialized bestBrain.
+if (localStorage.getItem("bestBrain")) {
+    for (let i = 0; i < cars.length; i++) {
+        cars[i].brain = JSON.parse(localStorage.getItem("bestBrain")); // localStorage only works with strings which is why we get the serialized bestBrain.
+        if (i != 0) ArtificialNeuralNetwork.mutate(cars[i].brain, 0.2);
+        
+    }
+}
 // Defining traffic
-const traffic = [new Car(road.getLaneCentre(1), -100, 30, 50, "DUMMY", 2), new Car(road.getLaneCentre(0), -300, 30, 50, "DUMMY", 2), new Car(road.getLaneCentre(2), -300, 30, 50, "DUMMY", 2)];
+const traffic = [new Car(road.getLaneCentre(1), -100, 30, 50, "DUMMY", 2), 
+                 new Car(road.getLaneCentre(0), -300, 30, 50, "DUMMY", 2), 
+                 new Car(road.getLaneCentre(2), -300, 30, 50, "DUMMY", 2),
+                 new Car(road.getLaneCentre(0), -500, 30, 50, "DUMMY", 2),
+                 new Car(road.getLaneCentre(1), -500, 30, 50, "DUMMY", 2),
+                 new Car(road.getLaneCentre(1), -700, 30, 50, "DUMMY", 2),
+                 new Car(road.getLaneCentre(2), -700, 30, 50, "DUMMY", 2)];
 // Drawing the simulation
 animate();
 
