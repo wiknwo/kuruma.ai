@@ -17,7 +17,7 @@ const traffic = [new Car(road.getLaneCentre(1), -100, 30, 50, "DUMMY", 2)];
 // Drawing the simulation
 animate();
 
-function animate() {
+function animate(time) {
     // Drawing Kuruma AI simulation
     for (let i = 0; i < traffic.length; i++) {
         traffic[i].update(road.borders, []);
@@ -34,6 +34,7 @@ function animate() {
     car.draw(carContext, "blue");
     carContext.restore();
     // Drawing visualization of car's brain
+    networkContext.lineDashOffset = -time / 50;
     Visualizer.drawNetwork(networkContext, car.brain);
     // Calls the animate() method repeatedly many 
     // times per second. It gives the illusion of 

@@ -2,7 +2,7 @@ class ArtificialNeuralNetwork {
     // ANN receives parameter indicating number of artifical neurons in each level
     constructor(neuronCounts) {
         this.levels = [];
-        for (let i = 0; i < neuronCounts.length; i++) {
+        for (let i = 0; i < neuronCounts.length - 1; i++) {
             this.levels.push(new Level(neuronCounts[i], neuronCounts[i + 1]));
         }
     }
