@@ -11,7 +11,7 @@ const networkContext = networkCanvas.getContext("2d");
 // Defining road
 const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9);
 // Defining car
-const car = new Car(road.getLaneCentre(1), 100, 30, 50, "KEYS");
+const car = new Car(road.getLaneCentre(1), 100, 30, 50, "AI");
 // Defining traffic
 const traffic = [new Car(road.getLaneCentre(1), -100, 30, 50, "DUMMY", 2)];
 // Drawing the simulation
