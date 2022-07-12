@@ -16,6 +16,8 @@ class Car {
             this.brain = new ArtificialNeuralNetwork([this.sensor.rayCount, 6, 4]); // Defining new ANN with input layer consisting of rayCount neurons, hidden layer with 6 neurons and output layer with 4 neurons; one for each direction.
         }
         this.controls = new Controls(controlType);
+        this.image = new Image();
+        this.image.src = "car.png";
     }
 
     update(roadBoarders, traffic) {
@@ -84,18 +86,12 @@ class Car {
         this.y -= Math.cos(this.angle) * this.speed;
     }
 
-    draw(context, color, drawSensor=false) {
-        if (this.isdamaged) {
-            context.fillStyle = "gray";
-        } else {
-            context.fillStyle = color;
-        }
-        context.beginPath();
-        context.moveTo(this.polygon[0].x, this.polygon[0].y);
-        for (let i = 1; i < this.polygon.length; i++) {
-            context.lineTo(this.polygon[i].x, this.polygon[i].y);
-        }
-        context.fill();
+    draw(context, drawSensor=false) {
+        context.save();
+        context.translate(this.x, this.y);
+        context.rotate(-this.angle);
+        context.drawImage(this.image, -this.width / 2, -this.height / 2, this.width, this.height);
+        context.restore();
         if (this.sensor && drawSensor) this.sensor.draw(context); // Car now has responsibility to draw its own sensor
     }
 }
